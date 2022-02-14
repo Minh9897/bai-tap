@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      function DrawTriangle() {
+        let n = document.getElementById("length").value;
+        let string = "";
+        for (let i = 1; i <= n; i++) {
+          for (let j = i; j > 0; j--) {
+            string += j % 10;
+            string += "&nbsp;&nbsp;";
+          }
+          string += "<br />";
+        }
+        document.getElementById("triangle").innerHTML = string;
+      }
+    </script>
+  </head>
+  <body>
+    <input type="number" title="length" id="length" min="1" />
+    <button type="button" onclick="DrawTriangle()">Ve tam giac</button>
+    <div id="triangle"></div>
+  </body>
+</html>
