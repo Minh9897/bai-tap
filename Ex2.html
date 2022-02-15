@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      var decisec = 0;
+      let timer;
+      function pad(val) {
+        return val > 9 ? val : "0" + val;
+      }
+
+      function start() {
+        if (!timer) {
+          timer = setInterval(function () {
+            document.getElementById("decisecond").innerHTML = ++decisec % 10;
+            document.getElementById("seconds").innerHTML = pad(
+              Math.floor(decisec / 10) % 60
+            );
+            document.getElementById("minutes").innerHTML = pad(
+              Math.floor(decisec / 600)
+            );
+          }, 100);
+        }
+      }
+
+      function stop() {
+        clearInterval(timer);
+        timer = null;
+      }
+
+      function reset() {
+        decisec = 0;
+        document.getElementById("minutes").innerHTML = pad(decisec);
+        document.getElementById("seconds").innerHTML = pad(decisec);
+        document.getElementById("decisecond").innerHTML = 0;
+      }
+    </script>
+  </head>
+  <body>
+    <span id="minutes">00</span>:<span id="seconds">00</span>.<span
+      id="decisecond"
+      >0</span
+    >
+    <br />
+    <button onclick="{start()}">Bat dau</button>
+    <button onclick="{stop()}">Dung lai</button>
+    <button onclick="{reset()}">Reset</button>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      var a = [0, 5];
+      document.write('<table border="3">');
+      a.forEach((value, index, array) => {
+        document.write("<tr>");
+        for (i = 1; i <= 5; i++) {
+          document.write("<td>");
+          for (j = 1; j <= 10; j++) {
+            document.write(
+              "<span>" +
+                (i + value) +
+                " x " +
+                j +
+                " = " +
+                (i + value) * j +
+                "&nbsp;" +
+                "</span> <br/>"
+            );
+          }
+          document.write("</td>");
+        }
+        document.write("</tr>");
+      });
+      document.write("</table>");
+    </script>
+  </head>
+  <body></body>
+</html>
