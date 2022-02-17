@@ -17,7 +17,7 @@ function Board(props) {
     let k = "r" + idx;
     return (
       <SquareRow
-        winCells={props.winCells}
+        winArray={props.winArray}
         rowIdx={idx}
         row={row}
         onClick={props.onClick}

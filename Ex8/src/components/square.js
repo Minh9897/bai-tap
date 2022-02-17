@@ -1,7 +1,7 @@
 import React from "react";
 
 function Square(props) {
-  return props.win ? (
+  return props.winCell ? (
     <button className="square square-highlight" onClick={props.onClick}>
       {props.value}
     </button>

@@ -1,164 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Board from "./board";
+import { checkWinner } from "../action/checkWinner";
+import { handleSize } from "../action/handleSize";
 
 const defaultWidth = 30;
 const defaultHeight = 30;
-
-function calculateWinner(squares, xPlayer, row, col, height, width) {
-  let player, rival;
-
-  // Get coordinates
-  let coorX = row;
-  let coorY = col;
-
-  let countCol = 1;
-  let countRow = 1;
-  let countMainDiagonal = 1;
-  let countSkewDiagonal = 1;
-  let isBlock;
-
-  if (xPlayer) {
-    player = "X";
-    rival = "O";
-  } else {
-    player = "O";
-    rival = "X";
-  }
-
-  // Check col
-  isBlock = true;
-  let winCells = [];
-  coorX -= 1;
-  while (coorX >= 0 && squares[coorX][coorY] === player) {
-    countCol += 1;
-    winCells.push([coorX, coorY]);
-    coorX -= 1;
-  }
-  if (coorX >= 0 && squares[coorX][coorY] !== rival) {
-    isBlock = false;
-  }
-  coorX = row;
-  winCells.push([coorX, coorY]);
-  coorX += 1;
-  while (coorX <= height - 1 && squares[coorX][coorY] === player) {
-    countCol += 1;
-    winCells.push([coorX, coorY]);
-    coorX += 1;
-  }
-  if (coorX <= height - 1 && squares[coorX][coorY] !== rival) {
-    isBlock = false;
-  }
-  coorX = row;
-  if (isBlock === false && countCol === 5) return winCells;
-
-  // Check row
-  isBlock = true;
-  winCells = [];
-  coorY -= 1;
-  while (coorY >= 0 && squares[coorX][coorY] === player) {
-    countRow += 1;
-    winCells.push([coorX, coorY]);
-    coorY -= 1;
-  }
-  if (coorY >= 0 && squares[coorX][coorY] !== rival) {
-    isBlock = false;
-  }
-  coorY = col;
-  winCells.push([coorX, coorY]);
-  coorY += 1;
-  while (coorY <= width - 1 && squares[coorX][coorY] === player) {
-    countRow += 1;
-    winCells.push([coorX, coorY]);
-    coorY += 1;
-  }
-  if (coorY <= width - 1 && squares[coorX][coorY] !== rival) {
-    isBlock = false;
-  }
-  coorY = col;
-  if (isBlock === false && countRow === 5) return winCells;
-
-  // Check BL - TR diagonal
-  isBlock = true;
-  winCells = [];
-  coorX -= 1;
-  coorY -= 1;
-  while (coorX >= 0 && coorY >= 0 && squares[coorX][coorY] === player) {
-    countMainDiagonal += 1;
-    winCells.push([coorX, coorY]);
-    coorX -= 1;
-    coorY -= 1;
-  }
-  if (coorX >= 0 && coorY >= 0 && squares[coorX][coorY] !== rival) {
-    isBlock = false;
-  }
-  coorX = row;
-  coorY = col;
-  winCells.push([coorX, coorY]);
-  coorX += 1;
-  coorY += 1;
-  while (
-    coorX <= height - 1 &&
-    coorY <= width - 1 &&
-    squares[coorX][coorY] === player
-  ) {
-    countMainDiagonal += 1;
-    winCells.push([coorX, coorY]);
-    coorX += 1;
-    coorY += 1;
-  }
-  if (
-    coorX <= height - 1 &&
-    coorY <= width - 1 &&
-    squares[coorX][coorY] !== rival
-  ) {
-    isBlock = false;
-  }
-  coorX = row;
-  coorY = col;
-
-  if (isBlock === false && countMainDiagonal === 5) return winCells;
-
-  //  Check TL - BR diagonal
-  isBlock = true;
-  winCells = [];
-  coorX -= 1;
-  coorY += 1;
-  while (coorX >= 0 && coorY >= 0 && squares[coorX][coorY] === player) {
-    countSkewDiagonal += 1;
-    winCells.push([coorX, coorY]);
-    coorX -= 1;
-    coorY += 1;
-  }
-  if (coorX >= 0 && coorY >= 0 && squares[coorX][coorY] !== rival) {
-    isBlock = false;
-  }
-  coorX = row;
-  coorY = col;
-  winCells.push([coorX, coorY]);
-  coorX += 1;
-  coorY -= 1;
-  while (
-    coorX <= height - 1 &&
-    coorY <= width - 1 &&
-    squares[coorX][coorY] === player
-  ) {
-    countSkewDiagonal += 1;
-    winCells.push([coorX, coorY]);
-    coorX += 1;
-    coorY -= 1;
-  }
-  if (
-    coorX <= defaultHeight - 1 &&
-    coorY <= defaultHeight - 1 &&
-    squares[coorX][coorY] !== rival
-  ) {
-    isBlock = false;
-  }
-
-  if (isBlock === false && countSkewDiagonal === 5) return winCells;
-
-  return null;
-}
+const defaultTime = 20 * 60;
 
 function Game() {
   let tmpArr = Array(defaultHeight);
@@ -169,83 +16,69 @@ function Game() {
   const [height, setHeight] = useState(defaultHeight);
   const [xPlayer, setxPlayer] = useState(true);
   const [winner, setWinner] = useState(false);
-  const [winCells, setWinCells] = useState([]);
+  const [winArray, setWinArray] = useState([]);
   const [squares, setSquares] = useState(tmpArr);
+  const [name1, setName1] = useState();
+  const [name2, setName2] = useState();
+  const [timer, setTimer] = useState();
 
-  function handleSize(squares, row, column) {
-    let newSquares = squares;
-    let newHeight = height;
-    let newWidth = width;
-    let rowIdx = row;
-    let columnIdx = column;
+  function pad(val) {
+    return val > 9 ? val : "0" + val;
+  }
 
-    if (row === height - 1) {
-      newHeight++;
-      newSquares[height] = Array(width).fill(null);
-    }
+  let time = defaultTime;
 
-    if (row === 0) {
-      newHeight++;
-      rowIdx++;
-      const emtyRow = Array(width).fill(null);
+  function countdown() {
+    console.log(time);
+    document.getElementById("seconds").innerHTML = pad(Math.floor(time % 60));
+    document.getElementById("minutes").innerHTML = pad(Math.floor(time / 60));
+    time--;
+  }
 
-      newSquares = [emtyRow, ...newSquares];
-    }
-
-    if (column === width - 1) {
-      newWidth++;
-      for (let i = 0; i < newHeight; i++) {
-        newSquares[i].push(null);
-      }
-    }
-
-    if (column === 0) {
-      newWidth++;
-      columnIdx++;
-      for (let i = 0; i < newHeight; i++) {
-        newSquares[i].unshift(null);
-      }
-    }
-
-    setHeight(newHeight);
-    setWidth(newWidth);
-    setSquares(newSquares);
-    return [newSquares, rowIdx, columnIdx, newHeight, newWidth];
+  function start() {
+    setTimer(setInterval(countdown, 1000));
   }
 
   function handleClick(row, column) {
     let tempSquare = squares;
     let rowIdx = row;
     let columnIdx = column;
-    let newHeight = height;
-    let newWidth = width;
+    let tempHeight = height;
+    let tempWidth = width;
     if (!tempSquare[rowIdx][columnIdx]) {
       tempSquare[rowIdx][columnIdx] = xPlayer ? "X" : "O";
-      setSquares(tempSquare);
-      [tempSquare, rowIdx, columnIdx, newHeight, newWidth] = handleSize(
+      [tempSquare, rowIdx, columnIdx, tempHeight, tempWidth] = handleSize(
         tempSquare,
         rowIdx,
-        columnIdx
+        columnIdx,
+        tempHeight,
+        tempWidth
       );
-      const winCells = calculateWinner(
+      const winArray = checkWinner(
         tempSquare,
         xPlayer,
         rowIdx,
         columnIdx,
-        newHeight,
-        newWidth
+        tempHeight,
+        tempWidth
       );
-      if (winCells) {
+      setSquares(tempSquare);
+      if (winArray) {
         setWinner(true);
-        setWinCells(winCells);
+        setWinArray(winArray);
+        clearInterval(timer);
       } else {
+        setHeight(tempHeight);
+        setWidth(tempWidth);
         setxPlayer(!xPlayer);
       }
     }
   }
 
   function Reset() {
-    setWinCells([]);
+    clearInterval(timer);
+    // start();
+    setWinArray([]);
     setxPlayer(true);
     setWinner(false);
     setSquares(tmpArr);
@@ -260,26 +93,37 @@ function Game() {
     status = "Player: ";
   }
 
+  useEffect(() => {
+    let input;
+    input = name1;
+    do {
+      input = prompt("Nhập tên người chơi 1 (X)");
+      setName1(input);
+    } while (input === null || input === "");
+    input = name2;
+    do {
+      input = prompt("Nhập tên người chơi 2 (O)");
+      setName2(input);
+    } while (input === null || input === "");
+    start();
+  }, []);
+
   return (
     <div class="content">
-      <div className="game-config">
-        <span className="fixed-size">Chiều rộng:</span>
-        <input type="number" placeholder="Chiều rộng" value={width} />
-        <br />
-        <span className="fixed-size">Chiều cao:</span>
-        <input type="number" placeholder="Chiều cao" value={height} />
-      </div>
       <div className="game">
         <div className="game-board">
           <Board
             squares={squares}
             onClick={!winner ? handleClick : (i, j) => null}
-            winCells={winCells}
-            player={xPlayer ? "X" : "O"}
+            winArray={winArray}
+            player={!winner ? (xPlayer ? "X" : "O") : ""}
           />
         </div>
         <div className="game-info">
-          <div>{status + (xPlayer ? "X" : "O")}</div>
+          <div>{status + (xPlayer ? name1 + "(X)" : name2 + "(O)")}</div>
+          <div>
+            Time: <span id="minutes">00</span>:<span id="seconds">00</span>
+          </div>
           <div>
             <button onClick={Reset}>Chơi lại (Reset)</button>
           </div>
