@@ -4,12 +4,12 @@ Foobar is a Python library for dealing with word pluralization.
 
 ## Installation
 
-```bash
+```powershell
 npm install
 ```
 
 ## Usage
 
-```bash
+```powershell
 npm start
 ```
