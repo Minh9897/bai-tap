@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      input {
+        margin-bottom: 5px;
+      }
+      th {
+        text-align: left;
+      }
+      .bar {
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="dataInput"></div>
+    <button type="button" onclick="{handleChart()}">Ve do thi</button>
+    <table id="chart" border="1" cellspacing="3"></table>
+  </body>
+  <script>
+    let string = "";
+    var myArray = new Array();
+    myArray[0] = "Anh";
+    myArray[1] = "Phap";
+    myArray[2] = "Duc";
+    myArray[3] = "Nga";
+    myArray[4] = "Nhat";
+    myArray[5] = "Viet Nam";
+
+    for (let i = 0; i < myArray.length; i++) {
+      string += myArray[i] + " : ";
+      string +=
+        '<input type="number" title="length" id="' +
+        myArray[i] +
+        '" min="0" value="0"/>';
+      string += "<br />";
+    }
+    document.getElementById("dataInput").innerHTML = string;
+
+    function handleChart() {
+      let string = "";
+      let bar, value;
+
+      for (let i = 0; i <= myArray.length - 1; i++) {
+        value = document.getElementById(myArray[i]).value;
+        string += "<tr> <th>" + myArray[i] + "</th> ";
+        bar = `<span class="bar">` + "&nbsp".repeat(value) + `</span>`;
+        string += "<th>" + bar + " " + value + "% </th> </tr>";
+      }
+      document.getElementById("chart").innerHTML = string;
+    }
+  </script>
+</html>
