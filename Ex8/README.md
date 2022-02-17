@@ -1,6 +1,6 @@
 # Exercise 8
 
-Build A Offline Caro Game With React App
+Build An Offline Caro Game With React App
 
 ## Installation
 
