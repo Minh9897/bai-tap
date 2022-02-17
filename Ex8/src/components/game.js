@@ -2,16 +2,18 @@ import React, { useState, useEffect } from "react";
 import Board from "./board";
 import { checkWinner } from "../action/checkWinner";
 import { handleSize } from "../action/handleSize";
+import { useInterval } from "../hook/useInterval";
 
 const defaultWidth = 30;
 const defaultHeight = 30;
-const defaultTime = 20 * 60;
+const defaultTime = 20 * 60 * 10;
 
 function Game() {
   let tmpArr = Array(defaultHeight);
   for (let i = 0; i < defaultHeight; i++) {
     tmpArr[i] = Array(defaultWidth).fill(null);
   }
+
   const [width, setWidth] = useState(defaultWidth);
   const [height, setHeight] = useState(defaultHeight);
   const [xPlayer, setxPlayer] = useState(true);
@@ -20,24 +22,55 @@ function Game() {
   const [squares, setSquares] = useState(tmpArr);
   const [name1, setName1] = useState();
   const [name2, setName2] = useState();
-  const [timer, setTimer] = useState();
+  const [time, setTime] = useState(defaultTime);
 
   function pad(val) {
     return val > 9 ? val : "0" + val;
   }
 
-  let time = defaultTime;
-
-  function countdown() {
-    console.log(time);
-    document.getElementById("seconds").innerHTML = pad(Math.floor(time % 60));
-    document.getElementById("minutes").innerHTML = pad(Math.floor(time / 60));
-    time--;
+  function displayTime(time) {
+    document.getElementById("seconds").innerHTML = pad(
+      Math.ceil(time / 10) % 60
+    );
+    document.getElementById("minutes").innerHTML = pad(
+      Math.floor(Math.ceil(time / 10) / 60)
+    );
   }
 
-  function start() {
-    setTimer(setInterval(countdown, 1000));
+  let status;
+  if (time !== -1) {
+    if (winner) {
+      status = "Winner: " + (xPlayer ? name1 + "(X)" : name2 + "(O)");
+    } else {
+      status = "Player: " + (xPlayer ? name1 + "(X)" : name2 + "(O)");
+    }
+  } else {
+    status = "Tie";
   }
+
+  useInterval(
+    () => {
+      displayTime(time);
+      setTime(time - 1);
+    },
+    !winner ? (time !== -1 ? 100 : null) : null
+  );
+
+  useEffect(() => {
+    if (winner) {
+      const timePlay = defaultTime - time;
+      const minutes = pad(Math.floor(timePlay / 600));
+      const seconds = pad(Math.floor(timePlay / 10) % 60);
+      alert(
+        "The winner is " +
+          (xPlayer ? name1 + " (X)" : name2 + " (O)") +
+          "\nPlay Time: " +
+          minutes +
+          ":" +
+          seconds
+      );
+    }
+  }, [winner]);
 
   function handleClick(row, column) {
     let tempSquare = squares;
@@ -64,9 +97,8 @@ function Game() {
       );
       setSquares(tempSquare);
       if (winArray) {
-        setWinner(true);
         setWinArray(winArray);
-        clearInterval(timer);
+        setWinner(true);
       } else {
         setHeight(tempHeight);
         setWidth(tempWidth);
@@ -76,21 +108,13 @@ function Game() {
   }
 
   function Reset() {
-    clearInterval(timer);
-    // start();
+    setTime(defaultTime);
     setWinArray([]);
     setxPlayer(true);
-    setWinner(false);
     setSquares(tmpArr);
     setWidth(defaultWidth);
     setHeight(defaultHeight);
-  }
-
-  let status;
-  if (winner) {
-    status = "Winner: ";
-  } else {
-    status = "Player: ";
+    setWinner(false);
   }
 
   useEffect(() => {
@@ -105,7 +129,6 @@ function Game() {
       input = prompt("Nhập tên người chơi 2 (O)");
       setName2(input);
     } while (input === null || input === "");
-    start();
   }, []);
 
   return (
@@ -120,13 +143,19 @@ function Game() {
           />
         </div>
         <div className="game-info">
-          <div>{status + (xPlayer ? name1 + "(X)" : name2 + "(O)")}</div>
-          <div>
-            Time: <span id="minutes">00</span>:<span id="seconds">00</span>
-          </div>
-          <div>
-            <button onClick={Reset}>Chơi lại (Reset)</button>
-          </div>
+          <table cellspacing="10" style={{ textAlign: "left" }}>
+            <tr>
+              <th>{status}</th>
+            </tr>
+            <tr>
+              <th>
+                Time: <span id="minutes">00</span>:<span id="seconds">00</span>
+              </th>
+            </tr>
+            <tr>
+              <button onClick={Reset}>Chơi lại (Reset)</button>
+            </tr>
+          </table>
         </div>
       </div>
     </div>

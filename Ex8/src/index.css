@@ -3,23 +3,12 @@ body {
   margin: 20px;
 }
 
-ol,
-ul {
-  padding-left: 30px;
-}
-
-.board-row:after {
-  clear: both;
-  content: "";
-  display: table;
-}
-
 .status {
   margin-bottom: 10px;
 }
 
 .game-board {
-  width: 60vw;
+  max-width: 60vw;
   max-height: 60vh;
   overflow: auto;
   padding: 1px;
@@ -48,13 +37,13 @@ ul {
   color: rgba(128, 128, 128, 0.541);
 }
 
-.hover-square:hover .square:focus {
+/* .hover-square:hover .square:focus {
   outline: none;
 }
 
 .kbd-navigation .square:focus {
   background: #ddd;
-}
+} */
 
 .game {
   display: flex;
@@ -73,22 +62,11 @@ ul {
   width: 100px;
   display: inline-block;
 }
-.btn-bold {
+/* .btn-bold {
   font-weight: bold;
-}
+} */
 .square-highlight {
   color: red;
   background-color: yellow;
   font-weight: bold;
-}
-.content {
-}
-
-.footer {
-  position: fixed;
-  display: block;
-  width: 100%;
-  background: rgb(197, 197, 197);
-  text-align: center;
-  bottom: 0;
 }
