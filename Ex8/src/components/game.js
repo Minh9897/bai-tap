@@ -46,6 +46,7 @@ function Game() {
     }
   } else {
     status = "Tie";
+    alert("Tie");
   }
 
   useInterval(

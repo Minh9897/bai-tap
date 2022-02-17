@@ -1,5 +1,5 @@
+import React from "react";
 import SquareRow from "./squarerow";
-import React, { useState } from "react";
 
 function Board(props) {
   let board;
