@@ -27,9 +27,9 @@ function Board(props) {
     );
   });
   return (
-    <Draggable bounds="game-board" {...dragHandlers}>
-      <div style={{ position: "relative", width: "100vw" }}>{board}</div>;
-    </Draggable>
+    // <Draggable bounds="game-board" {...dragHandlers}>
+    <div style={{ position: "relative", width: "100vw" }}>{board}</div>
+    // </Draggable>
   );
 }
 

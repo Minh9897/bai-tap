@@ -8,15 +8,16 @@
         let string = "";
         for (let i = 1; i <= n; i++) {
           middle = Math.round((i - 1) / 2 + 1) % 10;
+          string += "<tr>";
           for (let j = 1; j <= n - i; j++) {
-            string += "&nbsp;&nbsp;";
+            string += "<th>&nbsp;</th>";
           }
           for (let k = 1; k <= i; k++) {
             let coef = Math.floor(Math.abs(i / 2 - k + 0.5));
-            string += (coef + middle) % 10;
-            string += "&nbsp;&nbsp;&nbsp;";
+            string += "<th>" + ((coef + middle) % 10) + "</th>";
+            string += "<th>&nbsp;</th>";
           }
-          string += "<br />";
+          string += "</tr>";
         }
         document.getElementById("triangle").innerHTML = string;
       }
@@ -25,6 +26,6 @@
   <body>
     <input type="number" title="length" id="length" min="1" />
     <button type="button" onclick="DrawTriangle()">Ve tam giac</button>
-    <div id="triangle"></div>
+    <table id="triangle"></table>
   </body>
 </html>
